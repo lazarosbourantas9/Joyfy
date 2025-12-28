@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Joyfy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="preloader">
+    <div class="loader-content">
+      <div class="loader-circle"></div>
+      <h2 style="color: white; letter-spacing: 4px; font-weight: 800;">JOYFY</h2>
+    </div>
+  </div>
+
+  <div class="orb-container">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <header>
+    <div class="logo">
+      <img src="icons/logo.png" alt="Joyfy Logo">
+      <span>Joyfy</span>
+    </div>
+    <div class="lang-toggle">
+      <button id="langBtn">GR</button>
+    </div>
+  </header>
+
+  <div class="ad-container reveal">
+  <span>Advertisement</span>
+  </div>
+
+  <div class="hero reveal" style="text-align: center; padding: 80px 20px 60px;">
+    <h1 id="heroTitle" style="font-size: 3.5rem; margin-bottom: 16px;">Play Without Limits</h1>
+    <p id="heroText" style="color: var(--text-muted); font-size: 1.2rem; margin-bottom: 30px;">Play amazing games anytime, anywhere.</p>
+    <button id="heroBtn">Get Started</button>
+  </div>
+
+  <section style="padding: 60px 40px;">
+    <h2 id="categoriesTitle" class="reveal" style="text-align: center; font-size: 2rem; margin-bottom: 30px;">Game Categories</h2>
+    <div class="categories" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; max-width: 1100px; margin: 0 auto;">
+      
+      <div class="card reveal delay-1" onclick="location.href='PartyGames/partygames.html'">
+        <h3 id="cat1Title">🎮 Party Games</h3>
+        <p id="cat1Text">Fun for everyone</p>
+      </div>
+
+      <div class="card reveal delay-1" onclick="location.href='categories/family.html'">
+        <h3 id="cat1Title">🎮 Drunk Games</h3>
+        <p id="cat1Text">Fun for everyone</p>
+      </div>
+      
+      <div class="card reveal delay-2">
+        <h3 id="cat2Title">🏎 Racing Games</h3>
+        <p id="cat2Text">Speed and adrenaline</p>
+      </div>
+
+      <div class="card reveal delay-3">
+        <h3 id="cat3Title">🧠 Puzzle Games</h3>
+        <p id="cat3Text">Logic and challenges</p>
+      </div>
+    </div>
+  </section>
+
+<footer style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1);">
+  <p>© 2025 Joyfy Games · All Rights Reserved</p>
+  <div style="margin-top: 10px;">
+    <a href="privacy.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">Privacy Policy</a>
+    <a href="about.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">About Us</a>
+  </div>
+</footer>
+<script>
+    // 3. Script to hide preloader and trigger reveals
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      
+      // Hide preloader
+      preloader.style.opacity = '0';
+      setTimeout(() => {
+        preloader.style.visibility = 'hidden';
+        
+        // Trigger reveal animations
+        const reveals = document.querySelectorAll('.reveal');
+        reveals.forEach(el => el.classList.add('active'));
+      }, 800);
+    });
+
+    // ... your existing translation script here ...
+  </script>
+<script>
+  let currentLang = "en";
+  const translations = {
+    en: {
+      heroTitle: "Play Without Limits",
+      heroText: "Play amazing games anytime, anywhere.",
+      heroBtn: "Get Started",
+      categoriesTitle: "Game Categories",
+      cat1Title: "🎮 Family Games",
+      cat1Text: "Fun for everyone",
+      cat2Title: "🏎 Racing Games",
+      cat2Text: "Speed and adrenaline",
+      cat3Title: "🧠 Puzzle Games",
+      cat3Text: "Logic and challenges",
+      cat4Title: "⚔ Action Games",
+      cat4Text: "Adventure and combat",
+      footer: "© 2025 Joyfy Games · All Rights Reserved",
+      button: "GR"
+    },
+    gr: {
+      heroTitle: "Παίξε Χωρίς Όρια",
+      heroText: "Παίξε καταπληκτικά παιχνίδια οποτεδήποτε, οπουδήποτε.",
+      heroBtn: "Ξεκίνα",
+      categoriesTitle: "Κατηγορίες Παιχνιδιών",
+      cat1Title: "🎮 Οικογενειακά Παιχνίδια",
+      cat1Text: "Διασκέδαση για όλους",
+      cat2Title: "🏎 Αγώνες Ταχύτητας",
+      cat2Text: "Ταχύτητα και αδρεναλίνη",
+      cat3Title: "🧠 Παιχνίδια Λογικής",
+      cat3Text: "Γρίφοι και προκλήσεις",
+      cat4Title: "⚔ Παιχνίδια Δράσης",
+      cat4Text: "Περιπέτεια και μάχη",
+      footer: "© 2025 Joyfy Games · Με επιφύλαξη παντός δικαιώματος",
+      button: "EN"
+    }
+  };
+
+  document.getElementById("langBtn").addEventListener("click", () => {
+    currentLang = currentLang === "en" ? "gr" : "en";
+    const t = translations[currentLang];
+    document.getElementById("heroTitle").innerText = t.heroTitle;
+    document.getElementById("heroText").innerText = t.heroText;
+    document.getElementById("heroBtn").innerText = t.heroBtn;
+    document.getElementById("categoriesTitle").innerText = t.categoriesTitle;
+    document.getElementById("cat1Title").innerText = t.cat1Title;
+    document.getElementById("cat1Text").innerText = t.cat1Text;
+    document.getElementById("cat2Title").innerText = t.cat2Title;
+    document.getElementById("cat2Text").innerText = t.cat2Text;
+    document.getElementById("cat3Title").innerText = t.cat3Title;
+    document.getElementById("cat3Text").innerText = t.cat3Text;
+    document.getElementById("cat4Title").innerText = t.cat4Title;
+    document.getElementById("cat4Text").innerText = t.cat4Text;
+    document.getElementById("footerText").innerText = t.footer;
+    document.getElementById("langBtn").innerText = t.button;
+  });
+</script>
+</body>
+</html>

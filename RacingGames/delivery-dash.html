@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delivery Dash | Joyfy</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #world { width: 100%; height: 300px; background: #0b0624; position: relative; overflow: hidden; border-bottom: 10px solid #444; }
+        #truck { width: 80px; height: 40px; background: var(--secondary); position: absolute; bottom: 0; left: 50px; border-radius: 5px 15px 0 0; }
+        #cargo { width: 20px; height: 20px; background: var(--primary); border-radius: 50%; position: absolute; top: -20px; left: 10px; }
+    </style>
+</head>
+<body>
+    <header><a href="index.html" class="logo"><span>JOYFY</span></a></header>
+    <div class="game-box" style="margin: 20px auto;">
+        <div id="world">
+            <div id="truck"><div id="cargo"></div></div>
+        </div>
+        <p>Hold the button to accelerate. Don't lose the cargo!</p>
+        <button id="heroBtn" onmousedown="accelerate()" onmouseup="brake()">GAS</button>
+    </div>
+
+    <script>
+        let speed = 0;
+        let cargoBalance = 0;
+        function accelerate() {
+            const driveInterval = setInterval(() => {
+                speed += 0.2;
+                cargoBalance -= speed * 0.1;
+                document.getElementById('cargo').style.transform = `translateX(${cargoBalance}px)`;
+                
+                if(cargoBalance < -30) {
+                    alert("Cargo Lost! You Lose!");
+                    clearInterval(driveInterval);
+                    location.reload();
+                }
+            }, 50);
+            window.onmouseup = () => clearInterval(driveInterval);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+:root {
+  --bg-gradient: radial-gradient(circle at center, #1a0f4d 0%, #0b0624 100%);
+  --primary: #ff4fd8;
+  --secondary: #5b8cff;
+  --text-light: #ffffff;
+  --text-muted: #c7c7e0;
+  --card-bg: rgba(28, 20, 74, 0.6);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--text-light);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* --- Original Header Style Restored --- */
+header {
+  display: flex;
+  justify-content: space-between; /* Keeps logo left, button right */
+  align-items: center;
+  padding: 20px 40px; /* Original padding */
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo img {
+  width: 48px; /* Original size */
+}
+
+.logo span {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+}
+
+.lang-toggle button {
+  background: transparent;
+  border: 1px solid var(--text-muted);
+  color: var(--text-light);
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* --- New Animated Background Orbs --- */
+.orb-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  filter: blur(80px);
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: float 20s infinite alternate;
+}
+
+.orb-1 { width: 400px; height: 400px; background: var(--primary); top: -10%; left: -10%; }
+.orb-2 { width: 500px; height: 500px; background: var(--secondary); bottom: -10%; right: -10%; animation-duration: 25s; }
+
+@keyframes float {
+  from { transform: translate(0, 0); }
+  to { transform: translate(100px, 100px); }
+}
+
+/* --- Premium Cards & Buttons --- */
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 30px 20px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  border-color: var(--primary);
+  box-shadow: 0 0 20px rgba(255, 79, 216, 0.3);
+}
+
+#heroBtn {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: none;
+  color: white;
+  padding: 16px 42px;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+#heroBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--primary);
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: 40px;
+}
+
+/* --- Preloader Styles --- */
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0b0624;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.8s ease-out, visibility 0.8s;
+}
+
+.loader-content {
+  text-align: center;
+}
+
+.loader-circle {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* --- Reveal Animations --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delay for staggering the cards */
+.delay-1 { transition-delay: 0.2s; }
+.delay-2 { transition-delay: 0.4s; }
+.delay-3 { transition-delay: 0.6s; }
+
+/* Ad Slot Container */
+.ad-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  min-height: 90px; /* Standard Leaderboard height */
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  max-width: 728px;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}

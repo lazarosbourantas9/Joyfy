@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Infinite Highway | Joyfy</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #road { width: 300px; height: 500px; background: #222; margin: 0 auto; position: relative; border-left: 5px dashed #fff; border-right: 5px dashed #fff; overflow: hidden; }
+        .player-car { width: 40px; height: 70px; background: var(--primary); position: absolute; bottom: 20px; transition: left 0.2s; border-radius: 5px; }
+        .enemy-car { width: 40px; height: 70px; background: var(--secondary); position: absolute; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <header><a href="index.html" class="logo"><span>JOYFY</span></a></header>
+    <div class="game-box" style="margin: 20px auto; text-align: center;">
+        <div id="road">
+            <div id="player" class="player-car" style="left: 130px;"></div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="heroBtn" onclick="move(-1)">LEFT</button>
+            <button id="heroBtn" onclick="move(1)">RIGHT</button>
+        </div>
+    </div>
+
+    <script>
+        let playerX = 130;
+        function move(dir) {
+            playerX += dir * 80;
+            if(playerX < 50) playerX = 50;
+            if(playerX > 210) playerX = 210;
+            document.getElementById('player').style.left = playerX + 'px';
+        }
+
+        function spawnEnemy() {
+            const enemy = document.createElement('div');
+            enemy.className = 'enemy-car';
+            const lanes = [50, 130, 210];
+            enemy.style.left = lanes[Math.floor(Math.random() * 3)] + 'px';
+            enemy.style.top = '-100px';
+            document.getElementById('road').appendChild(enemy);
+
+            let pos = -100;
+            const interval = setInterval(() => {
+                pos += 5;
+                enemy.style.top = pos + 'px';
+                
+                // Collision check
+                if(pos > 410 && pos < 480 && parseInt(enemy.style.left) === playerX) {
+                    alert("CRASHED! Watch an ad to revive?");
+                    location.reload();
+                }
+
+                if(pos > 500) {
+                    clearInterval(interval);
+                    enemy.remove();
+                }
+            }, 20);
+        }
+        setInterval(spawnEnemy, 1500);
+    </script>
+</body>
+</html>

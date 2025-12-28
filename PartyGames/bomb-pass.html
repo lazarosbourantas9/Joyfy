@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bomb Pass | Joyfy</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #bomb { font-size: 8rem; transition: transform 0.2s; cursor: pointer; }
+        .exploding { transform: scale(1.5); filter: hue-rotate(90deg); }
+        #status { font-size: 1.5rem; margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <header><a href="../index.html" class="logo"><span>JOYFY</span></a></header>
+    <div class="game-box" style="max-width:500px; margin: 50px auto;">
+        <h1 id="task">Tap to Start!</h1>
+        <div id="bomb">💣</div>
+        <div id="status">Ready?</div>
+        <button id="heroBtn" onclick="startGame()" style="margin-top:20px;">Start Round</button>
+    </div>
+
+    <script>
+        let timer;
+        const tasks = ["Name 3 Fruits", "Name 3 Countries", "Name 3 Rock Bands", "Name 3 Greek Islands"];
+        
+        function startGame() {
+            document.getElementById('status').innerText = "PASS THE BOMB!";
+            document.getElementById('task').innerText = tasks[Math.floor(Math.random()*tasks.length)];
+            let timeLeft = Math.floor(Math.random() * 10) + 5; // 5-15 seconds
+
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    explode();
+                }
+            }, 1000);
+        }
+
+        function explode() {
+            clearInterval(timer);
+            document.getElementById('bomb').innerText = "💥";
+            document.getElementById('bomb').classList.add('exploding');
+            document.getElementById('status').innerText = "BOOM! YOU LOSE!";
+            document.getElementById('task').innerText = "Game Over";
+        }
+
+        document.getElementById('bomb').addEventListener('click', () => {
+            if(document.getElementById('bomb').innerText !== "💥") {
+                document.getElementById('task').innerText = tasks[Math.floor(Math.random()*tasks.length)];
+            }
+        });
+    </script>
+</body>
+</html>

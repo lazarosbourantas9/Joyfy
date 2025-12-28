@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sync Tap | Joyfy</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .track { width: 100%; height: 60px; background: #000; position: relative; border-radius: 30px; overflow: hidden; margin: 40px 0; }
+        .target { position: absolute; left: 50%; top: 0; width: 20px; height: 100%; background: var(--primary); transform: translateX(-50%); box-shadow: 0 0 15px var(--primary); }
+        .bar { position: absolute; left: 0; top: 0; width: 10px; height: 100%; background: white; animation: slide 2s linear infinite alternate; }
+        @keyframes slide { from { left: 0%; } to { left: 98%; } }
+    </style>
+</head>
+<body>
+    <header><a href="index.html" class="logo"><span>JOYFY</span></a></header>
+    <div class="game-box" style="max-width:600px; margin: 50px auto;">
+        <h1>Sync Tap</h1>
+        <p>Tap when the white bar is in the pink zone!</p>
+        <div class="track">
+            <div class="target"></div>
+            <div id="movingBar" class="bar"></div>
+        </div>
+        <button id="heroBtn" onmousedown="checkSync()">TAP NOW!</button>
+        <div id="result" style="margin-top: 20px; font-size: 1.2rem;"></div>
+    </div>
+
+    <script>
+        function checkSync() {
+            const bar = document.getElementById('movingBar');
+            const position = parseFloat(window.getComputedStyle(bar).left);
+            const containerWidth = bar.parentElement.offsetWidth;
+            const percentage = (position / containerWidth) * 100;
+
+            const accuracy = Math.abs(50 - percentage);
+            if (accuracy < 5) {
+                document.getElementById('result').innerText = "PERFECT SYNC! 🌟";
+                document.getElementById('result').style.color = "var(--primary)";
+            } else if (accuracy < 15) {
+                document.getElementById('result').innerText = "GREAT! 👍";
+                document.getElementById('result').style.color = "var(--secondary)";
+            } else {
+                document.getElementById('result').innerText = "MISSED! ❌";
+                document.getElementById('result').style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>

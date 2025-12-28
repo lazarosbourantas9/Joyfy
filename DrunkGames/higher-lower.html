@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Higher or Lower | Joyfy</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .card-display { font-size: 8rem; background: white; color: #0b0624; width: 150px; height: 220px; 
+                        margin: 20px auto; border-radius: 15px; display: flex; align-items: center; 
+                        justify-content: center; box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+        .controls { display: flex; gap: 20px; justify-content: center; }
+        .penalty { color: #ff4f4f; font-weight: 800; animation: shake 0.5s; }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(5px); } 50% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+    </style>
+</head>
+<body>
+    <header><a href="index.html" class="logo"><span>JOYFY</span></a></header>
+    <div class="game-box" style="max-width:500px; margin: 40px auto; text-align: center;">
+        <h2 id="msg">Guess Next Card!</h2>
+        <div id="card" class="card-display">7</div>
+        <div class="controls">
+            <button id="heroBtn" onclick="play(true)">Higher ↑</button>
+            <button id="heroBtn" onclick="play(false)" style="background: var(--secondary);">Lower ↓</button>
+        </div>
+        <div id="penaltyBox" style="margin-top:20px; height: 30px;"></div>
+    </div>
+
+    <script>
+        let currentVal = 7;
+        function play(isHigher) {
+            const newVal = Math.floor(Math.random() * 13) + 1;
+            const won = isHigher ? newVal >= currentVal : newVal <= currentVal;
+            
+            document.getElementById('card').innerText = newVal;
+            const pBox = document.getElementById('penaltyBox');
+            
+            if (!won) {
+                pBox.innerHTML = "<span class='penalty'>WRONG! TAKE A DRINK 🍻</span>";
+                document.body.style.background = "#4d0f0f";
+                setTimeout(() => document.body.style.background = "var(--bg-gradient)", 500);
+            } else {
+                pBox.innerHTML = "<span style='color: #4fff8f'>SAFE! NEXT PLAYER.</span>";
+            }
+            currentVal = newVal;
+        }
+    </script>
+</body>
+</html>

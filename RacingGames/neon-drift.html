@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Neon Drift | Joyfy</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #gameCanvas { background: #050212; border: 2px solid var(--secondary); border-radius: 12px; width: 100%; max-width: 600px; touch-action: none; }
+        .score-ui { position: absolute; top: 20px; left: 20px; font-weight: 800; color: var(--primary); font-size: 1.5rem; }
+    </style>
+</head>
+<body>
+    <header><a href="index.html" class="logo"><span>JOYFY</span></a></header>
+    <div class="game-box" style="margin: 20px auto; position: relative;">
+        <div class="score-ui">Score: <span id="score">0</span></div>
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+        <p style="margin-top: 15px;">Hold screen/mouse to drift!</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let score = 0;
+        let angle = 0;
+        let x = 300, y = 200;
+        let turning = false;
+
+        function drawCar() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            // Draw Car
+            ctx.fillStyle = "#5b8cff";
+            ctx.fillRect(-15, -10, 30, 20);
+            ctx.fillStyle = "#ff4fd8"; // Neon Headlights
+            ctx.fillRect(10, -10, 5, 5);
+            ctx.fillRect(10, 5, 5, 5);
+            ctx.restore();
+        }
+
+        function update() {
+            if (turning) {
+                angle += 0.07;
+                score += 1;
+                document.getElementById('score').innerText = score;
+            }
+            // Move forward
+            x += Math.cos(angle) * 3;
+            y += Math.sin(angle) * 3;
+
+            // Screen wrap
+            if(x > 600) x = 0; if(x < 0) x = 600;
+            if(y > 400) y = 0; if(y < 0) y = 400;
+
+            drawCar();
+            requestAnimationFrame(update);
+        }
+
+        window.addEventListener('mousedown', () => turning = true);
+        window.addEventListener('mouseup', () => turning = false);
+        window.addEventListener('touchstart', () => turning = true);
+        window.addEventListener('touchend', () => turning = false);
+        update();
+    </script>
+</body>
+</html>

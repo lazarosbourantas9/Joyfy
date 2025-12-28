@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Doodle Guess | Joyfy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header><a href="index.html" class="logo"><span>JOYFY</span></a></header>
+    <div class="game-box" style="max-width:600px; margin: 20px auto;">
+        <h2 id="drawWord">Secret Word: CAT</h2>
+        <canvas id="paint" width="500" height="400" style="background: white; border-radius: 12px; cursor: crosshair;"></canvas>
+        <div style="margin-top: 20px;">
+            <button onclick="clearCanvas()" style="background:gray; border:none; padding:10px; color:white; border-radius:5px;">Clear</button>
+            <button onclick="nextWord()" id="heroBtn" style="padding:10px 20px;">Next Word</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('paint');
+        const ctx = canvas.getContext('2d');
+        let painting = false;
+
+        function startPosition(e) { painting = true; draw(e); }
+        function finishedPosition() { painting = false; ctx.beginPath(); }
+        
+        function draw(e) {
+            if (!painting) return;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#000';
+
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', finishedPosition);
+        canvas.addEventListener('mousemove', draw);
+
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+        
+        function nextWord() {
+            const words = ["Pizza", "Bicycle", "Eiffel Tower", "Sun", "Ghost"];
+            document.getElementById('drawWord').innerText = "Secret Word: " + words[Math.floor(Math.random()*words.length)];
+            clearCanvas();
+        }
+    </script>
+</body>
+</html>

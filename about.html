@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us | Joyfy</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .about-container {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 40px;
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+    .about-container h1 { 
+      font-size: 3rem; 
+      margin-bottom: 20px; 
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .about-container h2 { color: var(--secondary); margin-top: 40px; }
+    .about-container p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px; }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .stat-box {
+      padding: 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+    }
+    .stat-box h3 { color: var(--primary); font-size: 1.8rem; margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+
+<div class="orb-container">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+</div>
+
+<header>
+  <div class="logo">
+    <img src="icons/logo.png" alt="Joyfy Logo">
+    <span>Joyfy</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" style="color:white; text-decoration:none;">⬅ Back Home</a>
+  </div>
+</header>
+
+<main class="about-container reveal active">
+  <h1>Our Mission</h1>
+  <p>
+    Welcome to <strong>Joyfy</strong>, the ultimate destination for instant browser-based gaming. 
+    Founded in 2025, Joyfy was created with a simple goal: to break down the barriers between players and play. 
+    We believe that gaming should be accessible, free, and fun for everyone, everywhere.
+  </p>
+
+  <h2>Play Without Limits</h2>
+  <p>
+    Whether you are looking for a high-octane racing challenge, a social "Drunk Game" for your next party, 
+    or a relaxing puzzle to solve during your break, Joyfy offers a curated selection of lightweight 
+    HTML5 games that require no downloads and no installations.
+  </p>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <h3>9+</h3>
+      <p>Original Games</p>
+    </div>
+    <div class="stat-box">
+      <h3>100%</h3>
+      <p>Browser Based</p>
+    </div>
+    <div class="stat-box">
+      <h3>∞</h3>
+      <p>Free to Play</p>
+    </div>
+  </div>
+
+  <h2 style="margin-top: 50px;">The Technology</h2>
+  <p>
+    Our platform is built using the latest web technologies, including HTML5, CSS3, and JavaScript. 
+    By leveraging high-performance physics engines and modern canvas rendering, we deliver a 
+    smooth "app-like" experience directly in your browser.
+  </p>
+</main>
+
+<footer>
+  <p>© 2025 Joyfy Games · All Rights Reserved</p>
+  <div style="margin-top: 10px;">
+    <a href="privacy.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">Privacy Policy</a>
+    <a href="about.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">About Us</a>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dizzy Balance | Joyfy</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #stage { width: 250px; height: 250px; border: 4px solid var(--primary); border-radius: 50%; 
+                 margin: 40px auto; position: relative; background: rgba(255,255,255,0.05); }
+        #ball { width: 30px; height: 30px; background: white; border-radius: 50%; 
+                position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); 
+                box-shadow: 0 0 15px white; }
+    </style>
+</head>
+<body>
+    <header><a href="../index.html" class="logo"><span>JOYFY</span></a></header>
+    <div class="game-box" style="max-width:500px; margin: 40px auto; text-align:center;">
+        <h1>Dizzy Balance</h1>
+        <p>Don't let the ball touch the pink ring!</p>
+        <div id="stage"><div id="ball"></div></div>
+        <button id="heroBtn" onclick="requestPermission()">Start Sensors</button>
+    </div>
+
+    <script>
+        let x = 110, y = 110;
+        function requestPermission() {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(state => {
+                    if (state === 'granted') window.addEventListener('deviceorientation', handleMove);
+                });
+            } else { window.addEventListener('deviceorientation', handleMove); }
+        }
+
+        function handleMove(e) {
+            x += e.gamma * 0.5;
+            y += e.beta * 0.5;
+            const ball = document.getElementById('ball');
+            ball.style.left = x + 'px';
+            ball.style.top = y + 'px';
+
+            // Collision check
+            const dist = Math.sqrt(Math.pow(x-110, 2) + Math.pow(y-110, 2));
+            if (dist > 110) {
+                alert("OUT! Drink up!");
+                x = 110; y = 110;
+            }
+        }
+    </script>
+</body>
+</html>
