@@ -30,7 +30,7 @@
   </header>
 
   <div class="ad-container reveal">
-  <span>Advertisement</span>
+    <span>Advertisement</span>
   </div>
 
   <div class="hero reveal" style="text-align: center; padding: 80px 20px 60px;">
@@ -49,47 +49,42 @@
       </div>
 
       <div class="card reveal delay-1" onclick="location.href='categories/family.html'">
-        <h3 id="cat1Title">🎮 Drunk Games</h3>
-        <p id="cat1Text">Fun for everyone</p>
+        <h3 id="cat2Title">🎮 Drunk Games</h3>
+        <p id="cat2Text">Fun for everyone</p>
       </div>
       
       <div class="card reveal delay-2">
-        <h3 id="cat2Title">🏎 Racing Games</h3>
-        <p id="cat2Text">Speed and adrenaline</p>
+        <h3 id="cat3Title">🏎 Racing Games</h3>
+        <p id="cat3Text">Speed and adrenaline</p>
       </div>
 
       <div class="card reveal delay-3">
-        <h3 id="cat3Title">🧠 Puzzle Games</h3>
-        <p id="cat3Text">Logic and challenges</p>
+        <h3 id="cat4Title">🧠 Puzzle Games</h3>
+        <p id="cat4Text">Logic and challenges</p>
       </div>
     </div>
   </section>
 
 <footer style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1);">
-  <p>© 2025 Joyfy Games · All Rights Reserved</p>
+  <p id="footerText">© 2025 Joyfy Games · All Rights Reserved</p>
   <div style="margin-top: 10px;">
     <a href="privacy.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">Privacy Policy</a>
     <a href="about.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">About Us</a>
   </div>
 </footer>
+
 <script>
-    // 3. Script to hide preloader and trigger reveals
     window.addEventListener('load', () => {
       const preloader = document.getElementById('preloader');
-      
-      // Hide preloader
       preloader.style.opacity = '0';
       setTimeout(() => {
         preloader.style.visibility = 'hidden';
-        
-        // Trigger reveal animations
         const reveals = document.querySelectorAll('.reveal');
         reveals.forEach(el => el.classList.add('active'));
       }, 800);
     });
+</script>
 
-    // ... your existing translation script here ...
-  </script>
 <script>
   let currentLang = "en";
   const translations = {
@@ -98,14 +93,14 @@
       heroText: "Play amazing games anytime, anywhere.",
       heroBtn: "Get Started",
       categoriesTitle: "Game Categories",
-      cat1Title: "🎮 Family Games",
+      cat1Title: "🎮 Party Games",
       cat1Text: "Fun for everyone",
-      cat2Title: "🏎 Racing Games",
-      cat2Text: "Speed and adrenaline",
-      cat3Title: "🧠 Puzzle Games",
-      cat3Text: "Logic and challenges",
-      cat4Title: "⚔ Action Games",
-      cat4Text: "Adventure and combat",
+      cat2Title: "🎮 Drunk Games",
+      cat2Text: "Fun for adults",
+      cat3Title: "🏎 Racing Games",
+      cat3Text: "Speed and adrenaline",
+      cat4Title: "🧠 Puzzle Games",
+      cat4Text: "Logic and challenges",
       footer: "© 2025 Joyfy Games · All Rights Reserved",
       button: "GR"
     },
@@ -114,14 +109,14 @@
       heroText: "Παίξε καταπληκτικά παιχνίδια οποτεδήποτε, οπουδήποτε.",
       heroBtn: "Ξεκίνα",
       categoriesTitle: "Κατηγορίες Παιχνιδιών",
-      cat1Title: "🎮 Οικογενειακά Παιχνίδια",
+      cat1Title: "🎮 Παιχνίδια Πάρτι",
       cat1Text: "Διασκέδαση για όλους",
-      cat2Title: "🏎 Αγώνες Ταχύτητας",
-      cat2Text: "Ταχύτητα και αδρεναλίνη",
-      cat3Title: "🧠 Παιχνίδια Λογικής",
-      cat3Text: "Γρίφοι και προκλήσεις",
-      cat4Title: "⚔ Παιχνίδια Δράσης",
-      cat4Text: "Περιπέτεια και μάχη",
+      cat2Title: "🎮 Παιχνίδια Πάρτι (18+)",
+      cat2Text: "Διασκέδαση για ενήλικες",
+      cat3Title: "🏎 Αγώνες Ταχύτητας",
+      cat3Text: "Ταχύτητα και αδρεναλίνη",
+      cat4Title: "🧠 Παιχνίδια Λογικής",
+      cat4Text: "Γρίφοι και προκλήσεις",
       footer: "© 2025 Joyfy Games · Με επιφύλαξη παντός δικαιώματος",
       button: "EN"
     }
@@ -130,6 +125,8 @@
   document.getElementById("langBtn").addEventListener("click", () => {
     currentLang = currentLang === "en" ? "gr" : "en";
     const t = translations[currentLang];
+    
+    // Updates UI elements
     document.getElementById("heroTitle").innerText = t.heroTitle;
     document.getElementById("heroText").innerText = t.heroText;
     document.getElementById("heroBtn").innerText = t.heroBtn;
@@ -142,7 +139,11 @@
     document.getElementById("cat3Text").innerText = t.cat3Text;
     document.getElementById("cat4Title").innerText = t.cat4Title;
     document.getElementById("cat4Text").innerText = t.cat4Text;
+    
+    // This line works now because the footer has the ID "footerText"
     document.getElementById("footerText").innerText = t.footer;
+    
+    // This line updates the button text to the next language
     document.getElementById("langBtn").innerText = t.button;
   });
 </script>

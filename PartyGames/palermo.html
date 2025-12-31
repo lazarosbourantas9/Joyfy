@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Palermo Helper | Joyfy</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    /* Custom adjustments for the Palermo UI */
+    .game-box { max-width: 600px; margin: 40px auto; padding: 30px; }
+    input { 
+      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); 
+      background: rgba(0,0,0,0.3); color: white; margin-bottom: 20px; font-size: 1rem;
+    }
+    .status-container { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; text-align: left; }
+    .status-box { flex: 1 1 200px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; }
+    .status-box h4 { margin: 0 0 10px; color: var(--secondary); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+    .status-box ul { padding-left: 20px; color: var(--text-muted); }
+    .role-display { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin: 20px 0; min-height: 1.6em; }
+    .narration-text { font-size: 1.1rem; line-height: 1.6; margin: 20px 0; white-space: pre-wrap; }
+    .mad-win { color: #ff66ff; font-weight: bold; font-size: 1.3rem; }
+  </style>
+</head>
+<body>
+
+<div class="orb-container">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+</div>
+
+<header>
+  <div class="logo"><img src="../icons/logo.png" alt="Joyfy"><span>Joyfy</span></div>
+  <div class="nav-links"><a href="index.html">⬅ Back Home</a></div>
+</header>
+
+<div class="game-box reveal active">
+  <h1>🌙 Μια Νύχτα στο Παλέρμο</h1>
+  <p style="color: var(--text-muted); margin-bottom: 25px;">Βοηθός Αφηγητή για το κλασικό παιχνίδι.</p>
+
+  <div id="setupArea">
+    <label style="display:block; margin-bottom:8px; text-align:left;">Ονόματα παικτών (χωρισμένα με κόμμα)</label>
+    <input type="text" id="names" placeholder="π.χ. Μαρία, Γιάννης, Ελένη">
+    <button id="heroBtn" onclick="generateRoles()" style="width:100%;">🎲 Γεννήστε Ρόλους</button>
+  </div>
+
+  <div id="revealBox" style="display:none; text-align:center;">
+    <h3 id="currentPlayer" style="margin-bottom:15px;"></h3>
+    <button class="card" id="revealBtn" onclick="revealRole()" style="width:100%; cursor:pointer; background:rgba(255,255,255,0.1);">👁️ Δείξε Ρόλο</button>
+    <div id="roleDisplay" class="role-display"></div>
+    <button id="nextBtn" class="hero-style-btn" onclick="nextPlayer()" style="display:none; background:var(--primary); color:white; border:none; padding:10px 25px; border-radius:20px; cursor:pointer;">➡️ Επόμενος Παίκτης</button>
+  </div>
+
+  <div id="narrationBox" style="display:none;">
+    <h2 id="phaseLabel" style="color: var(--secondary); margin:0;">Φάση: Νύχτα</h2>
+    <p id="narrationText" class="narration-text"></p>
+    
+    <div class="status-container">
+      <div class="status-box">
+        <h4>🧍‍♂️ Ζωντανοί</h4>
+        <ul id="aliveList"></ul>
+      </div>
+      <div class="status-box">
+        <h4>🪦 Νεκροί</h4>
+        <ul id="deadList"></ul>
+      </div>
+    </div>
+    <button id="narrationBtn" onclick="nextNarrationStep()" style="margin-top:25px; background:var(--primary); color:white; border:none; padding:15px 40px; border-radius:30px; cursor:pointer; font-weight:bold;">➡️ Επόμενο</button>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 Joyfy Games · Palermo Helper</p>
+  <div style="margin-top: 10px;">
+    <a href="privacy.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">Privacy Policy</a>
+    <a href="about.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 10px;">About Us</a>
+  </div>
+</footer>
+
+<script>
+    // Full Logic Restored from your original file
+    let players = [];
+    let roles = [];
+    let alivePlayers = [];
+    let deadPlayers = [];
+    let index = 0;
+    let narrationStep = 0;
+    let gamePhase = "reveal";
+    let roundNumber = 1;
+
+    const nightNarration = [
+      "Η νύχτα πέφτει στο Παλέρμο. Όλοι οι παίκτες κλείνουν τα μάτια τους…",
+      "Οι Δολοφόνοι ανοίγουν τα μάτια τους και αναγνωρίζονται μεταξύ τους…",
+      "Οι Δολοφόνοι ξανακλείνουν τα μάτια τους.",
+      "Ο Ρουφιάνος ανοίγει τα μάτια του και δείχνει ποιον θέλει να ελέγξει.",
+      "Ο Ρουφιάνος ξανακλείνει τα μάτια.",
+      "Ο Αστυνόμος ανοίγει τα μάτια και κοιτάζει προσεκτικά…",
+      "Ο Αστυνόμος κλείνει τα μάτια του.",
+      "Ο Τρελός ανοίγει τα μάτια… χαμογελά ύποπτα… και ξανακλείνει.",
+      "Η μέρα ξημερώνει. Όλοι ανοίγουν τα μάτια!"
+    ];
+
+    function generateRoles() {
+      const input = document.getElementById("names").value.trim();
+      if (!input) { alert("Βάλτε ονόματα παικτών!"); return; }
+      players = input.split(",").map(n => n.trim()).filter(n => n);
+      if (players.length < 5) { alert("Χρειάζονται τουλάχιστον 5 παίκτες!"); return; }
+
+      alivePlayers = [...players];
+      deadPlayers = [];
+      roles = ["Δολοφόνος", "Δολοφόνος", "Αστυνόμος", "Ρουφιάνος", "Τρελός"];
+      while (roles.length < players.length) roles.push("Πολίτης");
+      roles.sort(() => Math.random() - 0.5);
+
+      index = 0;
+      narrationStep = 0;
+      roundNumber = 1;
+      gamePhase = "reveal";
+
+      document.getElementById("setupArea").style.display = "none";
+      document.getElementById("revealBox").style.display = "block";
+      updateAliveList();
+      updateDeadList();
+      updatePlayer();
+    }
+
+    function updatePlayer() {
+      document.getElementById("currentPlayer").innerText = "Παίκτης: " + players[index];
+      document.getElementById("roleDisplay").innerText = "";
+      document.getElementById("nextBtn").style.display = "none";
+      document.getElementById("revealBtn").style.display = "block";
+    }
+
+    function revealRole() {
+      document.getElementById("roleDisplay").innerText = roles[index];
+      document.getElementById("revealBtn").style.display = "none";
+      document.getElementById("nextBtn").style.display = "inline-block";
+    }
+
+    function nextPlayer() {
+      index++;
+      if (index >= players.length) {
+        document.getElementById("revealBox").style.display = "none";
+        startNightNarration();
+      } else {
+        updatePlayer();
+      }
+    }
+
+    function startNightNarration() {
+      gamePhase = "night";
+      narrationStep = 0;
+      document.getElementById("narrationBox").style.display = "block";
+      document.getElementById("phaseLabel").innerText = "Φάση: Νύχτα";
+      document.getElementById("narrationText").innerText = `Γύρος ${roundNumber}\n\n${nightNarration[narrationStep]}`;
+    }
+
+    function nextNarrationStep() {
+      if (gamePhase === "night") {
+        narrationStep++;
+        if (narrationStep >= nightNarration.length) {
+          startDiscussion();
+        } else {
+          document.getElementById("narrationText").innerText = nightNarration[narrationStep];
+        }
+      } else if (gamePhase === "discussion") {
+        gamePhase = "mafia_vote";
+        document.getElementById("phaseLabel").innerText = "Φάση: Απόφαση Δολοφόνων";
+        document.getElementById("narrationText").innerText = "Οι δολοφόνοι αποφασίζουν ποιον θα σκοτώσουν.";
+      } else if (gamePhase === "mafia_vote") {
+        handleMafiaKill();
+      }
+    }
+
+    function startDiscussion() {
+      gamePhase = "discussion";
+      document.getElementById("phaseLabel").innerText = "Φάση: Συζήτηση";
+      document.getElementById("narrationText").innerText = "Οι παίκτες συζητούν ποιος μπορεί να είναι ο δολοφόνος.";
+    }
+
+    function handleMafiaKill() {
+      const victim = prompt("Ποιος παίκτης σκοτώθηκε;");
+      if (!victim || !alivePlayers.includes(victim)) {
+        alert("Το όνομα δεν βρέθηκε!");
+        return;
+      }
+
+      const roleOfVictim = roles[players.indexOf(victim)];
+      alivePlayers = alivePlayers.filter(p => p !== victim);
+      deadPlayers.push(victim);
+      updateAliveList();
+      updateDeadList();
+
+      alert(`${victim} σκοτώθηκε! (Ρόλος: ${roleOfVictim})`);
+
+      if (roleOfVictim === "Τρελός") {
+        declareMadmanWin(victim);
+      } else if (!checkGameEnd()) {
+        roundNumber++;
+        startNightNarration();
+      }
+    }
+
+    function declareMadmanWin(name) {
+      gamePhase = "game_over";
+      document.getElementById("phaseLabel").innerText = "Τέλος Παιχνιδιού";
+      document.getElementById("narrationText").innerHTML = `<span class="mad-win">Ο Τρελός κερδίζει! 🤪</span><br><br>Ο ${name} ήταν ο Τρελός!`;
+      document.getElementById("narrationBtn").style.display = "none";
+    }
+
+    function checkGameEnd() {
+      const aliveRoles = alivePlayers.map(p => roles[players.indexOf(p)]);
+      const mafiaAlive = aliveRoles.filter(r => r === "Δολοφόνος").length;
+      const citizensAlive = alivePlayers.length - mafiaAlive;
+
+      if (mafiaAlive === 0) {
+        finishGame("Οι πολίτες νικούν! 🎉");
+        return true;
+      } else if (mafiaAlive >= citizensAlive) {
+        finishGame("Οι δολοφόνοι κερδίζουν! ☠️");
+        return true;
+      }
+      return false;
+    }
+
+    function finishGame(msg) {
+      gamePhase = "game_over";
+      document.getElementById("phaseLabel").innerText = "Τέλος Παιχνιδιού";
+      document.getElementById("narrationText").innerText = msg;
+      document.getElementById("narrationBtn").style.display = "none";
+    }
+
+    function updateAliveList() {
+      document.getElementById("aliveList").innerHTML = alivePlayers.map(p => `<li>${p}</li>`).join("");
+    }
+
+    function updateDeadList() {
+      document.getElementById("deadList").innerHTML = deadPlayers.map(p => `<li>${p}</li>`).join("");
+    }
+</script>
+</body>
+</html>
