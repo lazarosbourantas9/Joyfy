@@ -2,52 +2,200 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Doodle Guess | Joyfy</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Doodle Guess Pro | Joyfy</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .game-box { max-width: 850px; margin: 20px auto; text-align: center; border: 2px solid var(--secondary); }
+        #paint { 
+            background: #fff; 
+            border-radius: 15px; 
+            cursor: crosshair; 
+            box-shadow: 0 0 20px rgba(91, 140, 255, 0.2); 
+            touch-action: none;
+            border: 8px solid #222;
+        }
+        .setup-screen, .game-screen, .podium-screen { display: none; }
+        .active { display: block !important; }
+        
+        /* Neon UI Elements */
+        .status-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .tool-bar { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; }
+        .color-swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .color-swatch.active { border-color: white; transform: scale(1.2); }
+        
+        #timerDisplay { font-size: 2rem; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; }
+        .round-tag { background: var(--primary); padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        
+        .leaderboard { 
+            background: rgba(0,0,0,0.4); padding: 20px; border-radius: 15px; margin-top: 20px; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .player-score { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    </style>
 </head>
 <body>
-    <header><a href="index.html" class="logo"><span>JOYFY</span></a></header>
-    <div class="game-box" style="max-width:600px; margin: 20px auto;">
-        <h2 id="drawWord">Secret Word: CAT</h2>
-        <canvas id="paint" width="500" height="400" style="background: white; border-radius: 12px; cursor: crosshair;"></canvas>
-        <div style="margin-top: 20px;">
-            <button onclick="clearCanvas()" style="background:gray; border:none; padding:10px; color:white; border-radius:5px;">Clear</button>
-            <button onclick="nextWord()" id="heroBtn" style="padding:10px 20px;">Next Word</button>
+    <header><a href="../index.html" class="logo"><span>JOYFY</span></a></header>
+
+    <div class="game-box reveal active">
+        <div id="setupScreen" class="setup-screen active">
+            <h1 style="font-size: 3rem;">🎨 Doodle Guess</h1>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">Multiplayer Pass & Play Mode</p>
+            <input type="text" id="playerInput" placeholder="Enter names: Alex, Maria, Leo..." style="width: 80%; padding: 15px; margin-bottom: 20px;">
+            <button id="heroBtn" onclick="startGame()" style="width: 80%;">Start Tournament</button>
+        </div>
+
+        <div id="gameScreen" class="game-screen">
+            <div class="header-info" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span class="round-tag">ROUND <span id="roundDisplay">1</span></span>
+                <span style="font-size: 1.2rem;">Artist: <b id="turnName" style="color:var(--secondary)"></b></span>
+                <button onclick="endMatch()" style="background:none; color:var(--text-muted); border:none; cursor:pointer;">End Game</button>
+            </div>
+
+            <div class="status-row">
+                <div style="text-align: left;">
+                    <small style="display:block; opacity: 0.6;">SECRET WORD</small>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <h2 id="drawWord" style="margin:0; letter-spacing: 2px;">**********</h2>
+                        <button onclick="toggleWord()" class="hero-style-btn" id="visibilityBtn" style="padding: 5px 10px; font-size: 0.7rem;">👁️ SHOW</button>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <div id="timerDisplay">60s</div>
+                    <button onclick="startStopwatch()" id="timerBtn" style="background:var(--primary); border:none; color:white; padding:5px 15px; border-radius:10px; cursor:pointer;">START CLOCK</button>
+                </div>
+            </div>
+
+            <div class="tool-bar">
+                <div class="color-swatch active" style="background: #000;" onclick="setColor('#000', this)"></div>
+                <div class="color-swatch" style="background: #ff4fd8;" onclick="setColor('#ff4fd8', this)"></div>
+                <div class="color-swatch" style="background: #5b8cff;" onclick="setColor('#5b8cff', this)"></div>
+                <div class="color-swatch" style="background: #00ff99;" onclick="setColor('#00ff99', this)"></div>
+                <div class="color-swatch" style="background: #ffcc00;" onclick="setColor('#ffcc00', this)"></div>
+                <button onclick="clearCanvas()" style="background:none; border: 1px solid white; color:white; padding: 5px 15px; border-radius: 10px; margin-left: 20px; cursor:pointer;">🗑️ Clear</button>
+            </div>
+            
+            <canvas id="paint" width="750" height="450"></canvas>
+            
+            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
+                <button onclick="awardPoint()" id="heroBtn" style="background: #00ff99; color: black; padding: 15px 40px;">✅ Correct Guess!</button>
+                <button onclick="nextTurn()" class="hero-style-btn" style="background: rgba(255,255,255,0.1);">⏭️ Skip Turn</button>
+            </div>
+
+            <div class="leaderboard">
+                <h3 style="margin-top:0;">🏆 Current Rankings</h3>
+                <div id="scoreList"></div>
+            </div>
+        </div>
+
+        <div id="podiumScreen" class="podium-screen">
+            <h1 style="font-size: 3.5rem; color: var(--primary);">Tournament Over!</h1>
+            <div id="winnerDisplay" style="margin: 30px 0;"></div>
+            <button id="heroBtn" onclick="location.reload()">New Tournament</button>
         </div>
     </div>
 
     <script>
         const canvas = document.getElementById('paint');
         const ctx = canvas.getContext('2d');
-        let painting = false;
-
-        function startPosition(e) { painting = true; draw(e); }
-        function finishedPosition() { painting = false; ctx.beginPath(); }
+        const words = ["Letter", "Pizza", "Bicycle", "Eiffel Tower", "Sun", "Ghost", "Airplane", "Guitar", "Burger", "Snowman", "Octopus", "Laptop", "Mountain", "Banana", "Spider", "Volcano", "Cupcake", "Car", "Pasta", "Dog", "Giraffe"];
         
-        function draw(e) {
-            if (!painting) return;
-            ctx.lineWidth = 5;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = '#000';
+        let players = [], currentPlayerIndex = 0, currentRound = 1, currentWord = "", wordVisible = false, painting = false;
+        let timer, timeLeft = 60, timerRunning = false, currentColor = "#000";
 
-            const rect = canvas.getBoundingClientRect();
-            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        function startGame() {
+            const input = document.getElementById('playerInput').value.trim();
+            if (!input) return;
+            players = input.split(',').map(name => ({ name: name.trim(), score: 0 })).filter(p => p.name !== "");
+            document.getElementById('setupScreen').classList.remove('active');
+            document.getElementById('gameScreen').classList.add('active');
+            updateTurn();
+            updateLeaderboard();
         }
 
-        canvas.addEventListener('mousedown', startPosition);
-        canvas.addEventListener('mouseup', finishedPosition);
-        canvas.addEventListener('mousemove', draw);
+        function setColor(color, el) {
+            currentColor = color;
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+            el.classList.add('active');
+        }
 
-        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-        
-        function nextWord() {
-            const words = ["Pizza", "Bicycle", "Eiffel Tower", "Sun", "Ghost"];
-            document.getElementById('drawWord').innerText = "Secret Word: " + words[Math.floor(Math.random()*words.length)];
+        function nextTurn() {
+            currentPlayerIndex++;
+            if (currentPlayerIndex >= players.length) {
+                currentPlayerIndex = 0;
+                currentRound++;
+                document.getElementById('roundDisplay').innerText = currentRound;
+            }
+            updateTurn();
+            updateLeaderboard();
+        }
+
+        function awardPoint() {
+            players[currentPlayerIndex].score += 1;
+            nextTurn();
+        }
+
+        function updateTurn() {
+            currentWord = words[Math.floor(Math.random() * words.length)];
+            wordVisible = false;
+            document.getElementById('turnName').innerText = players[currentPlayerIndex].name;
+            document.getElementById('drawWord').innerText = "**********";
+            document.getElementById('visibilityBtn').innerText = "👁️ SHOW";
+            resetStopwatch();
             clearCanvas();
         }
+
+        function startStopwatch() {
+            if (timerRunning) return;
+            timerRunning = true;
+            document.getElementById('timerBtn').disabled = true;
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerDisplay').innerText = timeLeft + "s";
+                if (timeLeft <= 0) { clearInterval(timer); timerRunning = false; }
+            }, 1000);
+        }
+
+        function resetStopwatch() { clearInterval(timer); timeLeft = 60; timerRunning = false; document.getElementById('timerDisplay').innerText = "60s"; document.getElementById('timerBtn').disabled = false; }
+
+        function toggleWord() {
+            wordVisible = !wordVisible;
+            document.getElementById('drawWord').innerText = wordVisible ? currentWord.toUpperCase() : "**********";
+            document.getElementById('visibilityBtn').innerText = wordVisible ? "🙈 HIDE" : "👁️ SHOW";
+        }
+
+        function updateLeaderboard() {
+            document.getElementById('scoreList').innerHTML = players.sort((a, b) => b.score - a.score)
+                .map(p => `<div class="player-score"><span>${p.name}</span><span>${p.score} pts</span></div>`).join('');
+        }
+
+        function endMatch() {
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('podiumScreen').classList.add('active');
+            const winner = [...players].sort((a,b) => b.score - a.score)[0];
+            document.getElementById('winnerDisplay').innerHTML = `<h2>🥇 ${winner.name} wins with ${winner.score} points!</h2>`;
+        }
+
+        // Professional Drawing Logic
+        function draw(e) {
+            if (!painting) return;
+            ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.strokeStyle = currentColor;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || (e.touches ? e.touches[0].clientX : 0)) - rect.left;
+            const y = (e.clientY || (e.touches ? e.touches[0].clientY : 0)) - rect.top;
+            ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y);
+        }
+
+        canvas.addEventListener('mousedown', (e) => { painting = true; draw(e); });
+        canvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', () => { painting = false; ctx.beginPath(); });
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); painting = true; draw(e.touches[0]); });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
+        canvas.addEventListener('touchend', () => { painting = false; ctx.beginPath(); });
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
     </script>
 </body>
 </html>

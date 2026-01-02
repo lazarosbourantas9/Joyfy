@@ -2,54 +2,123 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bomb Pass | Joyfy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bomb Pass Pro | Joyfy</title>
     <link rel="stylesheet" href="../style.css">
     <style>
-        #bomb { font-size: 8rem; transition: transform 0.2s; cursor: pointer; }
-        .exploding { transform: scale(1.5); filter: hue-rotate(90deg); }
-        #status { font-size: 1.5rem; margin-top: 20px; font-weight: bold; }
+        .game-box { 
+            max-width: 600px; width: 90%; margin: 20px auto; padding: 30px;
+            border: 2px solid var(--secondary); text-align: center;
+            min-height: 480px; display: flex; flex-direction: column;
+            justify-content: center; background: rgba(15, 10, 40, 0.9); border-radius: 24px;
+        }
+        #bomb { 
+            font-size: clamp(5rem, 22vw, 11rem); margin: 15px 0;
+            cursor: pointer; user-select: none; transition: transform 0.1s;
+        }
+        .ticking { animation: pulse 0.6s infinite alternate; }
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); filter: drop-shadow(0 0 30px #ff4fd8); }
+        }
+        .exploding { animation: shake 0.1s infinite; transform: scale(1.5) !important; filter: hue-rotate(90deg); }
+        @keyframes shake {
+            0% { transform: translate(3px, 3px); }
+            50% { transform: translate(-3px, -3px); }
+            100% { transform: translate(3px, -3px); }
+        }
+        #task { font-size: clamp(1.3rem, 5.5vw, 2rem); color: var(--primary); min-height: 3em; font-weight: 800; }
+        input { 
+            width: 60px; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.5); color: white; text-align: center; font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
     <header><a href="../index.html" class="logo"><span>JOYFY</span></a></header>
-    <div class="game-box" style="max-width:500px; margin: 50px auto;">
-        <h1 id="task">Tap to Start!</h1>
-        <div id="bomb">💣</div>
-        <div id="status">Ready?</div>
-        <button id="heroBtn" onclick="startGame()" style="margin-top:20px;">Start Round</button>
+
+    <div class="game-box reveal active">
+        <h1 id="task">Set Players & Start!</h1>
+        <div id="bomb" onclick="handleBombClick()">💣</div>
+        
+        <div id="setupArea" style="margin-bottom: 20px;">
+            <label style="color: var(--text-muted); margin-right: 10px;">Players:</label>
+            <input type="number" id="playerCount" value="4" min="2" max="20">
+        </div>
+
+        <button id="heroBtn" onclick="startGame()" style="width: 100%; padding: 18px;">🔥 START ROUND</button>
+        <div id="status" style="margin-top: 15px; font-size: 0.9rem; opacity: 0.6;">TIME SCALES WITH PLAYERS</div>
     </div>
 
     <script>
         let timer;
-        const tasks = ["Name 3 Fruits", "Name 3 Countries", "Name 3 Rock Bands", "Name 3 Greek Islands"];
-        
-        function startGame() {
-            document.getElementById('status').innerText = "PASS THE BOMB!";
-            document.getElementById('task').innerText = tasks[Math.floor(Math.random()*tasks.length)];
-            let timeLeft = Math.floor(Math.random() * 10) + 5; // 5-15 seconds
+        let audioCtx;
+        const tasks = [
+            "Name 3 Fruits", "Name 3 Countries", "Name 3 Rock Bands", 
+            "Name 3 Greek Islands", "Name 3 Fast Food Chains", 
+            "Name 3 Superheroes", "Name 3 Video Games", "Name 3 Colors",
+            "Name 3 Car Brands", "Name 3 Animals", "Name 3 Pizza Toppings"
+        ];
 
+        function playSound(freq, type, duration, vol = 0.1) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) { console.warn("Audio Context blocked"); }
+        }
+
+        function startGame() {
+            const bomb = document.getElementById('bomb');
+            const task = document.getElementById('task');
+            const players = parseInt(document.getElementById('playerCount').value) || 4;
+            
+            // Scaled Time: approx 4-7 seconds per player
+            let minTime = players * 4;
+            let maxTime = players * 7;
+            let timeLeft = Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime; 
+            let initialTime = timeLeft;
+
+            bomb.innerText = "💣";
+            bomb.classList.remove('exploding');
+            bomb.classList.add('ticking');
+            task.innerText = tasks[Math.floor(Math.random() * tasks.length)];
+            
             clearInterval(timer);
             timer = setInterval(() => {
                 timeLeft--;
+                playSound(440 + (initialTime - timeLeft) * 20, 'sine', 0.1);
+                
                 if (timeLeft <= 0) {
                     explode();
                 }
             }, 1000);
         }
 
-        function explode() {
-            clearInterval(timer);
-            document.getElementById('bomb').innerText = "💥";
-            document.getElementById('bomb').classList.add('exploding');
-            document.getElementById('status').innerText = "BOOM! YOU LOSE!";
-            document.getElementById('task').innerText = "Game Over";
+        function handleBombClick() {
+            if (document.getElementById('bomb').innerText !== "💥" && document.getElementById('bomb').classList.contains('ticking')) {
+                playSound(800, 'square', 0.05, 0.05);
+                document.getElementById('task').innerText = tasks[Math.floor(Math.random() * tasks.length)];
+            }
         }
 
-        document.getElementById('bomb').addEventListener('click', () => {
-            if(document.getElementById('bomb').innerText !== "💥") {
-                document.getElementById('task').innerText = tasks[Math.floor(Math.random()*tasks.length)];
-            }
-        });
+        function explode() {
+            clearInterval(timer);
+            const bomb = document.getElementById('bomb');
+            bomb.innerText = "💥";
+            bomb.classList.remove('ticking');
+            bomb.classList.add('exploding');
+            playSound(100, 'sawtooth', 0.8, 0.2);
+            document.getElementById('task').innerText = "BOOM! GAME OVER!";
+        }
     </script>
 </body>
 </html>

@@ -2,46 +2,198 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sync Tap | Joyfy</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sync Tap Party | Joyfy</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="data:,">
     <style>
-        .track { width: 100%; height: 60px; background: #000; position: relative; border-radius: 30px; overflow: hidden; margin: 40px 0; }
-        .target { position: absolute; left: 50%; top: 0; width: 20px; height: 100%; background: var(--primary); transform: translateX(-50%); box-shadow: 0 0 15px var(--primary); }
-        .bar { position: absolute; left: 0; top: 0; width: 10px; height: 100%; background: white; animation: slide 2s linear infinite alternate; }
-        @keyframes slide { from { left: 0%; } to { left: 98%; } }
+        .game-box { max-width: 700px; margin: 40px auto; text-align: center; }
+        .setup-screen, .game-screen, .podium-screen { display: none; }
+        .active { display: block !important; }
+
+        /* The Track logic from your original file */
+        .track { 
+            width: 100%; height: 70px; background: rgba(0,0,0,0.4); 
+            position: relative; border-radius: 35px; overflow: hidden; 
+            margin: 30px 0; border: 2px solid rgba(255,255,255,0.1);
+        }
+        .target { 
+            position: absolute; left: 50%; top: 0; width: 40px; height: 100%; 
+            background: var(--primary); transform: translateX(-50%); 
+            box-shadow: 0 0 20px var(--primary); z-index: 1;
+        }
+        .bar { 
+            position: absolute; left: 0; top: 0; width: 12px; height: 100%; 
+            background: #fff; box-shadow: 0 0 10px #fff; z-index: 2;
+        }
+
+        /* CRITICAL: The Animation must be defined here */
+        @keyframes slide { 
+            from { left: 0%; } 
+            to { left: calc(100% - 12px); } 
+        }
+
+        .player-info { font-size: 1.5rem; color: var(--secondary); font-weight: 800; margin-bottom: 10px; }
+        .hud { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; }
+        input { padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; width: 80%; margin-bottom: 20px; }
+        
+        .track.shake { animation: shake-screen 0.2s; }
+        @keyframes shake-screen {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
     <header><a href="index.html" class="logo"><span>JOYFY</span></a></header>
-    <div class="game-box" style="max-width:600px; margin: 50px auto;">
-        <h1>Sync Tap</h1>
-        <p>Tap when the white bar is in the pink zone!</p>
-        <div class="track">
-            <div class="target"></div>
-            <div id="movingBar" class="bar"></div>
+
+    <div class="game-box reveal active">
+        <div id="setupScreen" class="setup-screen active">
+            <h1>🎉 Party Sync Tap</h1>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Enter player names (separated by commas)</p>
+            <input type="text" id="playerNames" placeholder="e.g. Alex, Maria, Chris">
+            <button id="heroBtn" onclick="initParty()" style="width: 80%;">Start Tournament</button>
         </div>
-        <button id="heroBtn" onmousedown="checkSync()">TAP NOW!</button>
-        <div id="result" style="margin-top: 20px; font-size: 1.2rem;"></div>
+
+        <div id="gameScreen" class="game-screen">
+            <div class="player-info">👤 <span id="activePlayer">Player</span></div>
+            <div class="hud">
+                <div>SCORE: <span id="scoreVal">0</span></div>
+                <div style="color: #ff4fd8;">LIVES: <span id="livesVal">3</span></div>
+            </div>
+
+            <div class="track" id="mainTrack">
+                <div class="target"></div>
+                <div id="movingBar" class="bar"></div>
+            </div>
+
+            <button id="tapBtn" onmousedown="checkSync()" style="width: 100%; padding: 25px; font-size: 1.5rem; font-weight: 800; cursor: pointer;">TAP NOW!</button>
+            <div id="result" style="margin-top: 15px; font-weight: bold; font-size: 1.2rem; min-height: 1.5em;"></div>
+        </div>
+
+        <div id="podiumScreen" class="podium-screen">
+            <h1 style="color: var(--primary);">🏆 Final Standings</h1>
+            <div id="leaderboard" style="text-align: left; margin: 20px auto; max-width: 400px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px;"></div>
+            <button onclick="location.reload()" class="hero-style-btn" style="margin-top: 20px; padding: 15px 40px; border-radius: 30px;">Play Again</button>
+        </div>
     </div>
 
     <script>
+        let players = [];
+        let currentPlayerIdx = 0;
+        let currentScore = 0;
+        let currentLives = 3;
+        let currentSpeed = 2.0; 
+        let canTap = true;
+
+        function initParty() {
+            const input = document.getElementById('playerNames').value.trim();
+            if (!input) {
+                alert("Please enter names separated by commas!");
+                return;
+            }
+            
+            players = input.split(',').map(n => ({ name: n.trim(), score: 0 })).filter(p => p.name !== "");
+            
+            if (players.length === 0) return;
+
+            document.getElementById('setupScreen').classList.remove('active');
+            document.getElementById('gameScreen').classList.add('active');
+            startTurn();
+        }
+
+        function startTurn() {
+            currentScore = 0;
+            currentLives = 3;
+            currentSpeed = 2.0; 
+            canTap = true;
+            
+            document.getElementById('activePlayer').innerText = players[currentPlayerIdx].name;
+            document.getElementById('result').innerText = "";
+            updateUI();
+            
+            // Explicitly trigger the animation on the bar
+            const bar = document.getElementById('movingBar');
+            bar.style.animation = "none";
+            // Trigger reflow to restart animation
+            void bar.offsetWidth; 
+            bar.style.animation = `slide ${currentSpeed}s linear infinite alternate`;
+        }
+
         function checkSync() {
+            if (!canTap) return;
+
             const bar = document.getElementById('movingBar');
             const position = parseFloat(window.getComputedStyle(bar).left);
             const containerWidth = bar.parentElement.offsetWidth;
             const percentage = (position / containerWidth) * 100;
 
             const accuracy = Math.abs(50 - percentage);
-            if (accuracy < 5) {
-                document.getElementById('result').innerText = "PERFECT SYNC! 🌟";
-                document.getElementById('result').style.color = "var(--primary)";
-            } else if (accuracy < 15) {
-                document.getElementById('result').innerText = "GREAT! 👍";
-                document.getElementById('result').style.color = "var(--secondary)";
+            const res = document.getElementById('result');
+
+            if (accuracy < 7) { // Slighly wider window for fairness
+                currentScore += 10;
+                res.innerText = "PERFECT! 🌟";
+                res.style.color = "var(--primary)";
+                
+                // Acceleration logic
+                currentSpeed = Math.max(0.6, currentSpeed - 0.15); 
+                bar.style.animation = `slide ${currentSpeed}s linear infinite alternate`;
+            } else if (accuracy < 18) {
+                currentScore += 5;
+                res.innerText = "GREAT! 👍";
+                res.style.color = "var(--secondary)";
             } else {
-                document.getElementById('result').innerText = "MISSED! ❌";
-                document.getElementById('result').style.color = "red";
+                currentLives--;
+                document.getElementById('mainTrack').classList.add('shake');
+                setTimeout(() => document.getElementById('mainTrack').classList.remove('shake'), 200);
+                res.innerText = "MISSED! ❌";
+                res.style.color = "#ff4444";
+                
+                if (currentLives <= 0) {
+                    canTap = false;
+                    endTurn();
+                    return;
+                }
             }
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('scoreVal').innerText = currentScore;
+            document.getElementById('livesVal').innerText = currentLives;
+        }
+
+        function endTurn() {
+            players[currentPlayerIdx].score = currentScore;
+            document.getElementById('movingBar').style.animation = 'none';
+
+            setTimeout(() => {
+                currentPlayerIdx++;
+                if (currentPlayerIdx < players.length) {
+                    alert(`Turn over! Next up: ${players[currentPlayerIdx].name}`);
+                    startTurn();
+                } else {
+                    showPodium();
+                }
+            }, 1000);
+        }
+
+        function showPodium() {
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('podiumScreen').classList.add('active');
+            
+            const board = document.getElementById('leaderboard');
+            players.sort((a, b) => b.score - a.score);
+            
+            board.innerHTML = players.map((p, i) => {
+                const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "👤";
+                return `<div style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between;">
+                    <span>${medal} ${p.name}</span>
+                    <span style="color: var(--primary); font-weight: bold;">${p.score} pts</span>
+                </div>`;
+            }).join('');
         }
     </script>
 </body>

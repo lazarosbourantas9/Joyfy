@@ -5,51 +5,203 @@
   <title>Party Games | Joyfy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../style.css">
+  <style>
+    /* Animated Background Orbs */
+    .orb-container {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1; overflow: hidden; background: #05030a;
+    }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4;
+      animation: move 20s infinite alternate;
+    }
+    .orb-1 { width: 400px; height: 400px; background: var(--primary); top: -10%; left: -10%; }
+    .orb-2 { width: 500px; height: 500px; background: var(--secondary); bottom: -10%; right: -10%; animation-delay: -5s; }
+    
+    @keyframes move {
+      from { transform: translate(0, 0); }
+      to { transform: translate(100px, 100px); }
+    }
+
+    /* Header Control Styles */
+    .header-controls { display: flex; gap: 10px; align-items: center; }
+    .control-btn { 
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); 
+      color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
+    }
+
+    /* Enhanced Game Cards */
+    .games-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px; padding: 20px 0;
+    }
+
+    .game-card {
+      background: rgba(255, 255, 255, 0.05) !important;
+      backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px; padding: 30px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer; position: relative; overflow: hidden;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px); background: rgba(255, 255, 255, 0.1) !important;
+      border-color: var(--primary); box-shadow: 0 15px 30px rgba(91, 140, 255, 0.2);
+    }
+
+    .game-card i-emoji { font-size: 3.5rem; display: block; margin-bottom: 20px; transition: transform 0.3s; }
+    .game-card:hover i-emoji { transform: scale(1.2) rotate(5deg); }
+    .game-card h3 { font-size: 1.5rem; margin-bottom: 10px; color: #fff; }
+    .game-card p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+
+    .badge {
+      position: absolute; top: 15px; right: 15px; background: var(--secondary);
+      color: white; font-size: 0.7rem; padding: 4px 10px; border-radius: 20px;
+      font-weight: bold; text-transform: uppercase;
+    }
+  </style>
 </head>
 <body>
+
+<div class="orb-container">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+</div>
 
 <header>
   <a href="../index.html" class="logo">
     <img src="../icons/logo.png" alt="Joyfy">
     <span>Joyfy</span>
   </a>
-  <div class="nav-links"><a href="../index.html">⬅ Back Home</a></div>
+  <div class="header-controls">
+    <button id="fullscreenBtn" class="control-btn" onclick="toggleFullScreen()">⛶</button>
+    <button id="langBtn" class="control-btn" onclick="toggleLanguage()">GR</button>
+  </div>
 </header>
 
-<main style="padding: 40px; max-width: 1100px; margin: auto;">
-  <h1 style="text-align:center;">🎉 Party Games</h1>
-  <p style="text-align:center; color:var(--text-muted); margin-bottom: 40px;">Fun and interactive games for your next gathering</p>
+<main style="padding: 60px 20px; max-width: 1200px; margin: auto;">
+  <div class="reveal active">
+    <h1 id="pageTitle" style="text-align:center; font-size: 3.5rem; margin-bottom: 10px;">🎉 Party Games</h1>
+    <p id="pageDesc" style="text-align:center; color:var(--text-muted); font-size: 1.2rem; margin-bottom: 50px;">
+      Level up your gatherings with interactive challenges
+    </p>
 
-  <div class="games" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px;">
-    
-    <div class="game-card" onclick="location.href='palermo.html'">
-      <div style="font-size:3rem; margin-bottom:15px; text-align:center;">🌙</div>
-      <h3>Παλέρμο Helper</h3>
-      <p>Οργανώστε το κλασικό παιχνίδι παρέας με αυτόματο μοίρασμα ρόλων.</p>
+    <div class="games-grid">
+      <div class="game-card" onclick="location.href='palermo.html'">
+        <span class="badge" data-label="social">Social</span>
+        <i-emoji>🌙</i-emoji>
+        <h3 id="game1Title">Palermo Helper</h3>
+        <p id="game1Desc">Assign roles and narrate the classic game of mystery and deception.</p>
+      </div>
+
+      <div class="game-card" onclick="location.href='bomb-pass.html'">
+        <span class="badge" data-label="active">Active</span>
+        <i-emoji>💣</i-emoji>
+        <h3 id="game2Title">Bomb Pass</h3>
+        <p id="game2Desc">The high-stakes game of speed. Answer and pass before you go BOOM!</p>
+      </div>
+
+      <div class="game-card" onclick="location.href='guess-word.html'">
+        <span class="badge" data-label="social">Social</span>
+        <i-emoji>🤯</i-emoji>
+        <h3 id="game3Title">Guess the Word</h3>
+        <p id="game3Desc">The ultimate forehead challenge. Tilt your way to the top of the leaderboard.</p>
+      </div>
+
+      <div class="game-card" onclick="location.href='sync-tap.html'">
+        <span class="badge" data-label="skill">Skill</span>
+        <i-emoji>⚡</i-emoji>
+        <h3 id="game4Title">Sync Tap</h3>
+        <p id="game4Desc">Reflexes are everything. Sync with the target and survive the speed ramp.</p>
+      </div>
+
+      <div class="game-card" onclick="location.href='doodle-guess.html'">
+        <span class="badge" data-label="creative">Creative</span>
+        <i-emoji>🎨</i-emoji>
+        <h3 id="game5Title">Doodle Guess</h3>
+        <p id="game5Desc">Draw fast and guess faster in this multiplayer artistic tournament.</p>
+      </div>
     </div>
-
-    <div class="game-card" onclick="location.href='bomb-pass.html'">
-      <div style="font-size:3rem; margin-bottom:15px; text-align:center;">💣</div>
-      <h3>Bomb Pass</h3>
-      <p>Pass the phone and complete the task before the bomb explodes!</p>
-    </div>
-
-    <div class="game-card" onclick="location.href='sync-tap.html'">
-      <div style="font-size:3rem; margin-bottom:15px; text-align:center;">⚡</div>
-      <h3>Sync Tap</h3>
-      <p>Test your rhythm and sync up with the target zone.</p>
-    </div>
-
-    <div class="game-card" onclick="location.href='doodle-guess.html'">
-      <div style="font-size:3rem; margin-bottom:15px; text-align:center;">🎨</div>
-      <h3>Doodle Guess</h3>
-      <p>Draw the secret word and let your friends guess what it is.</p>
-    </div>
-
   </div>
 </main>
 
-<footer>© 2025 Joyfy Games · All Rights Reserved</footer>
+<footer id="footerText" style="margin-top: 50px; opacity: 0.6; text-align: center;">
+  © 2025 Joyfy Games · Created for Epic Gatherings
+</footer>
 
+<script>
+    // Fullscreen Logic
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+      } else {
+          if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    // Language Persistence
+    let currentLang = localStorage.getItem("joyfyLang") || "en";
+
+    const translations = {
+      en: {
+        pageTitle: "🎉 Party Games",
+        pageDesc: "Level up your gatherings with interactive challenges",
+        game1Title: "Palermo Helper",
+        game1Desc: "Assign roles and narrate the classic game of mystery and deception.",
+        game2Title: "Bomb Pass",
+        game2Desc: "The high-stakes game of speed. Answer and pass before you go BOOM!",
+        game3Title: "Guess the Word",
+        game3Desc: "The ultimate forehead challenge. Tilt your way to the top of the leaderboard.",
+        game4Title: "Sync Tap",
+        game4Desc: "Reflexes are everything. Sync with the target and survive the speed ramp.",
+        game5Title: "Doodle Guess",
+        game5Desc: "Draw fast and guess faster in this multiplayer artistic tournament.",
+        footer: "© 2025 Joyfy Games · Created for Epic Gatherings",
+        btn: "GR"
+      },
+      gr: {
+        pageTitle: "🎉 Παιχνίδια Πάρτι",
+        pageDesc: "Απογειώστε τις συναντήσεις σας με διαδραστικές προκλήσεις",
+        game1Title: "Παλέρμο Helper",
+        game1Desc: "Μοιράστε ρόλους και αφηγηθείτε το κλασικό παιχνίδι μυστηρίου.",
+        game2Title: "Bomb Pass",
+        game2Desc: "Το παιχνίδι ταχύτητας. Απάντησε και πάσαρε πριν γίνει η έκρηξη!",
+        game3Title: "Guess the Word",
+        game3Desc: "Η απόλυτη πρόκληση στο μέτωπο. Γείρε το κινητό σου για τη νίκη.",
+        game4Title: "Sync Tap",
+        game4Desc: "Τα αντανακλαστικά είναι το παν. Συγχρονίσου με τον στόχο και επιβίωσε.",
+        game5Title: "Doodle Guess",
+        game5Desc: "Σχεδίασε γρήγορα και μάντεψε ακόμα πιο γρήγορα σε αυτό το τουρνουά.",
+        footer: "© 2025 Joyfy Games · Δημιουργήθηκε για Επικές Στιγμές",
+        btn: "EN"
+      }
+    };
+
+    function updateUI() {
+      const t = translations[currentLang];
+      document.getElementById("pageTitle").innerText = t.pageTitle;
+      document.getElementById("pageDesc").innerText = t.pageDesc;
+      document.getElementById("game1Title").innerText = t.game1Title;
+      document.getElementById("game1Desc").innerText = t.game1Desc;
+      document.getElementById("game2Title").innerText = t.game2Title;
+      document.getElementById("game2Desc").innerText = t.game2Desc;
+      document.getElementById("game3Title").innerText = t.game3Title;
+      document.getElementById("game3Desc").innerText = t.game3Desc;
+      document.getElementById("game4Title").innerText = t.game4Title;
+      document.getElementById("game4Desc").innerText = t.game4Desc;
+      document.getElementById("game5Title").innerText = t.game5Title;
+      document.getElementById("game5Desc").innerText = t.game5Desc;
+      document.getElementById("footerText").innerText = t.footer;
+      document.getElementById("langBtn").innerText = t.btn;
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === "en" ? "gr" : "en";
+      localStorage.setItem("joyfyLang", currentLang);
+      updateUI();
+    }
+
+    // Initialize UI on load
+    updateUI();
+</script>
 </body>
 </html>
