@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Joyfy</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:,">
+  <style>
+    /* Styling for the new header controls */
+    .header-controls { display: flex; gap: 10px; align-items: center; }
+    .control-btn { 
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); 
+      color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
+    }
+    .control-btn:hover { background: rgba(255,255,255,0.2); border-color: var(--primary); }
+  </style>
 </head>
 <body>
   <div id="preloader">
@@ -24,8 +34,9 @@
       <img src="icons/logo.png" alt="Joyfy Logo">
       <span>Joyfy</span>
     </div>
-    <div class="lang-toggle">
-      <button id="langBtn">GR</button>
+    <div class="header-controls">
+      <button id="fullscreenBtn" class="control-btn" onclick="toggleFullScreen()">⛶</button>
+      <button id="langBtn" class="control-btn">GR</button>
     </div>
   </header>
 
@@ -36,10 +47,10 @@
   <div class="hero reveal" style="text-align: center; padding: 80px 20px 60px;">
     <h1 id="heroTitle" style="font-size: 3.5rem; margin-bottom: 16px;">Play Without Limits</h1>
     <p id="heroText" style="color: var(--text-muted); font-size: 1.2rem; margin-bottom: 30px;">Play amazing games anytime, anywhere.</p>
-    <button id="heroBtn">Get Started</button>
+    <button id="heroBtn" onclick="location.href='#categories'">Get Started</button>
   </div>
 
-  <section style="padding: 60px 40px;">
+  <section id="categories" style="padding: 60px 40px;">
     <h2 id="categoriesTitle" class="reveal" style="text-align: center; font-size: 2rem; margin-bottom: 30px;">Game Categories</h2>
     <div class="categories" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; max-width: 1100px; margin: 0 auto;">
       
@@ -48,17 +59,17 @@
         <p id="cat1Text">Fun for everyone</p>
       </div>
 
-      <div class="card reveal delay-1" onclick="location.href='categories/family.html'">
+      <div class="card reveal delay-1" onclick="location.href='DrunkGames/drunkgames.html'">
         <h3 id="cat2Title">🎮 Drunk Games</h3>
         <p id="cat2Text">Fun for everyone</p>
       </div>
       
-      <div class="card reveal delay-2">
+      <div class="card reveal delay-2" onclick="location.href='RacingGames/racinggames.html'">
         <h3 id="cat3Title">🏎 Racing Games</h3>
         <p id="cat3Text">Speed and adrenaline</p>
       </div>
 
-      <div class="card reveal delay-3">
+      <div class="card reveal delay-3" onclick="location.href='PuzzleGames/puzzlegames.html'">
         <h3 id="cat4Title">🧠 Puzzle Games</h3>
         <p id="cat4Text">Logic and challenges</p>
       </div>
@@ -74,6 +85,7 @@
 </footer>
 
 <script>
+    // Preloader and Reveal Logic
     window.addEventListener('load', () => {
       const preloader = document.getElementById('preloader');
       preloader.style.opacity = '0';
@@ -83,69 +95,84 @@
         reveals.forEach(el => el.classList.add('active'));
       }, 800);
     });
-</script>
 
-<script>
-  let currentLang = "en";
-  const translations = {
-    en: {
-      heroTitle: "Play Without Limits",
-      heroText: "Play amazing games anytime, anywhere.",
-      heroBtn: "Get Started",
-      categoriesTitle: "Game Categories",
-      cat1Title: "🎮 Party Games",
-      cat1Text: "Fun for everyone",
-      cat2Title: "🎮 Drunk Games",
-      cat2Text: "Fun for adults",
-      cat3Title: "🏎 Racing Games",
-      cat3Text: "Speed and adrenaline",
-      cat4Title: "🧠 Puzzle Games",
-      cat4Text: "Logic and challenges",
-      footer: "© 2025 Joyfy Games · All Rights Reserved",
-      button: "GR"
-    },
-    gr: {
-      heroTitle: "Παίξε Χωρίς Όρια",
-      heroText: "Παίξε καταπληκτικά παιχνίδια οποτεδήποτε, οπουδήποτε.",
-      heroBtn: "Ξεκίνα",
-      categoriesTitle: "Κατηγορίες Παιχνιδιών",
-      cat1Title: "🎮 Παιχνίδια Πάρτι",
-      cat1Text: "Διασκέδαση για όλους",
-      cat2Title: "🎮 Παιχνίδια Πάρτι (18+)",
-      cat2Text: "Διασκέδαση για ενήλικες",
-      cat3Title: "🏎 Αγώνες Ταχύτητας",
-      cat3Text: "Ταχύτητα και αδρεναλίνη",
-      cat4Title: "🧠 Παιχνίδια Λογικής",
-      cat4Text: "Γρίφοι και προκλήσεις",
-      footer: "© 2025 Joyfy Games · Με επιφύλαξη παντός δικαιώματος",
-      button: "EN"
+    // Full Screen Logic
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+              alert(`Error attempting to enable full-screen mode: ${err.message}`);
+          });
+      } else {
+          if (document.exitFullscreen) {
+              document.exitFullscreen();
+          }
+      }
     }
-  };
 
-  document.getElementById("langBtn").addEventListener("click", () => {
-    currentLang = currentLang === "en" ? "gr" : "en";
-    const t = translations[currentLang];
-    
-    // Updates UI elements
-    document.getElementById("heroTitle").innerText = t.heroTitle;
-    document.getElementById("heroText").innerText = t.heroText;
-    document.getElementById("heroBtn").innerText = t.heroBtn;
-    document.getElementById("categoriesTitle").innerText = t.categoriesTitle;
-    document.getElementById("cat1Title").innerText = t.cat1Title;
-    document.getElementById("cat1Text").innerText = t.cat1Text;
-    document.getElementById("cat2Title").innerText = t.cat2Title;
-    document.getElementById("cat2Text").innerText = t.cat2Text;
-    document.getElementById("cat3Title").innerText = t.cat3Title;
-    document.getElementById("cat3Text").innerText = t.cat3Text;
-    document.getElementById("cat4Title").innerText = t.cat4Title;
-    document.getElementById("cat4Text").innerText = t.cat4Text;
-    
-    // This line works now because the footer has the ID "footerText"
-    document.getElementById("footerText").innerText = t.footer;
-    
-    // This line updates the button text to the next language
-    document.getElementById("langBtn").innerText = t.button;
-  });
+    // Persistent Language Logic
+    let currentLang = localStorage.getItem("joyfyLang") || "en";
+
+    const translations = {
+      en: {
+        heroTitle: "Play Without Limits",
+        heroText: "Play amazing games anytime, anywhere.",
+        heroBtn: "Get Started",
+        categoriesTitle: "Game Categories",
+        cat1Title: "🎮 Party Games",
+        cat1Text: "Fun for everyone",
+        cat2Title: "🎮 Drunk Games",
+        cat2Text: "Fun for adults",
+        cat3Title: "🏎 Racing Games",
+        cat3Text: "Speed and adrenaline",
+        cat4Title: "🧠 Puzzle Games",
+        cat4Text: "Logic and challenges",
+        footer: "© 2025 Joyfy Games · All Rights Reserved",
+        button: "GR"
+      },
+      gr: {
+        heroTitle: "Παίξε Χωρίς Όρια",
+        heroText: "Παίξε καταπληκτικά παιχνίδια οποτεδήποτε, οπουδήποτε.",
+        heroBtn: "Ξεκίνα",
+        categoriesTitle: "Κατηγορίες Παιχνιδιών",
+        cat1Title: "🎮 Παιχνίδια Πάρτι",
+        cat1Text: "Διασκέδαση για όλους",
+        cat2Title: "🎮 Παιχνίδια Πάρτι (18+)",
+        cat2Text: "Διασκέδαση για ενήλικες",
+        cat3Title: "🏎 Αγώνες Ταχύτητας",
+        cat3Text: "Ταχύτητα και αδρεναλίνη",
+        cat4Title: "🧠 Παιχνίδια Λογικής",
+        cat4Text: "Γρίφοι και προκλήσεις",
+        footer: "© 2025 Joyfy Games · Με επιφύλαξη παντός δικαιώματος",
+        button: "EN"
+      }
+    };
+
+    function updateUI() {
+      const t = translations[currentLang];
+      document.getElementById("heroTitle").innerText = t.heroTitle;
+      document.getElementById("heroText").innerText = t.heroText;
+      document.getElementById("heroBtn").innerText = t.heroBtn;
+      document.getElementById("categoriesTitle").innerText = t.categoriesTitle;
+      document.getElementById("cat1Title").innerText = t.cat1Title;
+      document.getElementById("cat1Text").innerText = t.cat1Text;
+      document.getElementById("cat2Title").innerText = t.cat2Title;
+      document.getElementById("cat2Text").innerText = t.cat2Text;
+      document.getElementById("cat3Title").innerText = t.cat3Title;
+      document.getElementById("cat3Text").innerText = t.cat3Text;
+      document.getElementById("cat4Title").innerText = t.cat4Title;
+      document.getElementById("cat4Text").innerText = t.cat4Text;
+      document.getElementById("footerText").innerText = t.footer;
+      document.getElementById("langBtn").innerText = t.button;
+    }
+
+    // Apply saved language on load
+    updateUI();
+
+    document.getElementById("langBtn").addEventListener("click", () => {
+      currentLang = currentLang === "en" ? "gr" : "en";
+      localStorage.setItem("joyfyLang", currentLang);
+      updateUI();
+    });
 </script>
 </body>
 </html>
